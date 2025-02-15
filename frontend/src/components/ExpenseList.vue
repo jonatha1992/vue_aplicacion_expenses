@@ -23,22 +23,22 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    expenses: {
-      type: Array,
-      required: true
-    }
-  },
-  methods: {
-    deleteExpense(index) {
-      this.$emit('delete-expense', index);
-    },
-    editExpense(index) {
-      this.$emit('edit-expense', index);
-    }
+<script setup>
+const props = defineProps({
+  expenses: {
+    type: Array,
+    required: true
   }
+})
+
+const emit = defineEmits(['remove-expense', 'edit-expense'])
+
+const deleteExpense = (index) => {
+  emit('remove-expense', index)
+}
+
+const editExpense = (index) => {
+  emit('edit-expense', index)
 }
 </script>
 

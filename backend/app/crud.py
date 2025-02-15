@@ -1,12 +1,21 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from .models import ExpenseDB, Expense
+from .models import ExpenseDB, CategoryDB, ExpenseCreate, Expense
 
-def create_expense(db: Session, expense: Expense) -> Expense:
-    db_expense = ExpenseDB(**expense.model_dump(exclude={'id'}))
+
+def create_expense(db: Session, expense: ExpenseCreate) -> Expense:
+    # Create expense
+    db_expense = ExpenseDB(
+        description=expense.description,
+        amount=expense.amount,
+        date=expense.date,
+        category_id=expense.category_id  # Cambiado para usar directamente el ID
+    )
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)
+    
+    # Convert to Pydantic model
     return Expense.model_validate(db_expense)
 
 def get_expense(db: Session, expense_id: int) -> Optional[Expense]:
@@ -35,3 +44,6 @@ def delete_expense(db: Session, expense_id: int) -> Optional[Expense]:
         db.commit()
         return expense
     return None
+
+def get_all_categories(db: Session) -> List[CategoryDB]:
+    return db.query(CategoryDB).all()
