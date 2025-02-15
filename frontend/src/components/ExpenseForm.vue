@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-    <h2 class="text-xl font-bold mb-4">Agregar Gasto</h2>
-    <form @submit.prevent="submitExpense" class="flex flex-col space-y-4">
+  <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg" :class="{'bg-yellow-50': isEditing}">
+    <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Actualizar Gasto' : 'Agregar Gasto' }}</h2>
+    <form @submit.prevent="handleSubmit" class="flex flex-col space-y-4">
       <input
         type="text"
         v-model="description"
@@ -33,30 +33,56 @@
           {{ cat.name }}
         </option>
       </select>
-      <button 
-        type="submit" 
-        :disabled="loading"
-        class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition disabled:bg-blue-300"
-      >
-        {{ loading ? 'Agregando...' : 'Agregar Gasto' }}
-      </button>
+      <div class="flex gap-2">
+        <button 
+          type="submit" 
+          :disabled="loading"
+          class="flex-1 text-white rounded p-2 transition disabled:opacity-50"
+          :class="isEditing ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-blue-500 hover:bg-blue-600'"
+        >
+          {{ loading ? 'Procesando...' : (isEditing ? 'Actualizar' : 'Agregar') }}
+        </button>
+        <button 
+          v-if="isEditing"
+          type="button"
+          @click="cancelEdit"
+          class="flex-1 bg-gray-500 text-white rounded p-2 hover:bg-gray-600 transition"
+        >
+          Cancelar
+        </button>
+      </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { categoryApi } from '../services/api'
 
 const props = defineProps({
-  loading: Boolean
+  loading: Boolean,
+  expenseToEdit: {
+    type: Object,
+    default: null
+  }
 })
 
-const emit = defineEmits(['add-expense'])
+const emit = defineEmits(['add-expense', 'update-expense', 'cancel-edit'])
 const description = ref('')
 const amount = ref('')
 const category = ref('')
 const categories = ref([])
+const isEditing = ref(false)
+
+// Watch para cuando cambie expenseToEdit
+watch(() => props.expenseToEdit, (newExpense) => {
+  if (newExpense) {
+    description.value = newExpense.description
+    amount.value = newExpense.amount
+    category.value = newExpense.category_id
+    isEditing.value = true
+  }
+}, { immediate: true })
 
 const loadCategories = async () => {
   try {
@@ -67,17 +93,32 @@ const loadCategories = async () => {
   }
 }
 
-const submitExpense = () => {
-  const expense = {
+const handleSubmit = () => {
+  const expenseData = {
     description: description.value,
     amount: parseFloat(amount.value),
-    category_id: category.value,  // Cambiado para usar directamente el ID
+    category_id: category.value,
     date: new Date().toISOString()
   }
-  emit('add-expense', expense)
+
+  if (isEditing.value) {
+    emit('update-expense', props.expenseToEdit.id, expenseData)
+  } else {
+    emit('add-expense', expenseData)
+  }
+  resetForm()
+}
+
+const cancelEdit = () => {
+  resetForm()
+  emit('cancel-edit')
+}
+
+const resetForm = () => {
   description.value = ''
   amount.value = ''
   category.value = ''
+  isEditing.value = false
 }
 
 onMounted(loadCategories)

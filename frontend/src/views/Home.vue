@@ -8,7 +8,13 @@
     <div class="flex flex-row gap-4">
       <!-- Columna izquierda - Formulario -->
       <div class="w-1/3">
-        <ExpenseForm @add-expense="addExpense" :loading="loading" />
+        <ExpenseForm 
+          @add-expense="addExpense" 
+          @update-expense="updateExpense"
+          @cancel-edit="cancelEdit"
+          :loading="loading"
+          :expense-to-edit="currentExpense" 
+        />
       </div>
 
       <!-- Columna derecha - Listado -->
@@ -36,6 +42,7 @@ import ExpenseList from '../components/ExpenseList.vue'
 const expenses = ref([])
 const loading = ref(false)
 const error = ref(null)
+const currentExpense = ref(null)
 
 const fetchExpenses = async () => {
     loading.value = true
@@ -83,7 +90,11 @@ const removeExpense = async (id) => {
   }
 }
 
-const editExpense = async (id, updatedExpense) => {
+const editExpense = (expense) => {
+  currentExpense.value = expense
+}
+
+const updateExpense = async (id, updatedExpense) => {
   loading.value = true
   error.value = null
   try {
@@ -92,12 +103,17 @@ const editExpense = async (id, updatedExpense) => {
     if (index !== -1) {
       expenses.value[index] = response.data
     }
+    currentExpense.value = null
   } catch (e) {
     error.value = 'Error al actualizar el gasto'
     console.error(e)
   } finally {
     loading.value = false
   }
+}
+
+const cancelEdit = () => {
+  currentExpense.value = null
 }
 
 onMounted(fetchExpenses)

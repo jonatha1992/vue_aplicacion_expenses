@@ -6,7 +6,7 @@
         <span>{{ expense.description }} - ${{ expense.amount }}</span>
         <div>
           <button 
-            @click="editExpense(index)"
+            @click="editExpense(expense)"
             class="mr-2 text-sm px-2 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600"
           >
             Editar
@@ -33,12 +33,12 @@ const props = defineProps({
 
 const emit = defineEmits(['remove-expense', 'edit-expense'])
 
-const deleteExpense = (index) => {
-  emit('remove-expense', index)
+const deleteExpense = (expense) => {
+  emit('remove-expense', expense.id)
 }
 
-const editExpense = (index) => {
-  emit('edit-expense', index)
+const editExpense = (expense) => {
+  emit('edit-expense', expense)
 }
 </script>
 
