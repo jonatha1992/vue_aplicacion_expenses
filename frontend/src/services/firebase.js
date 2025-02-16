@@ -8,13 +8,13 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCIPH9gri4dqlFRzc3N-mUvk6kV4H1B7oU",
-  authDomain: "expenses-traker-f3fcc.firebaseapp.com",
-  projectId: "expenses-traker-f3fcc",
-  storageBucket: "expenses-traker-f3fcc.firebasestorage.app",
-  messagingSenderId: "396367934349",
-  appId: "1:396367934349:web:517f583db5ef48606d43c4",
-  measurementId: "G-CB1CBDK624",
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
+  measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

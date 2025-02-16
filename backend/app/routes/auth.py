@@ -6,7 +6,8 @@ from app.models import UserCreate, User
 from app.security import get_password_hash, verify_password, create_access_token  # define estas funciónes
 from datetime import timedelta
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+# router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter()
 
 @router.post("/register", response_model=User)
 def register(user_create: UserCreate, db: Session = Depends(database.get_db)):
