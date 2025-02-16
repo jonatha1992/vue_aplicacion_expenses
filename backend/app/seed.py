@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from .models import CategoryDB
+from .models.models import CategoryDB
 from .database import SessionLocal, engine, Base
 
 # List of default categories

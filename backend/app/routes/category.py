@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import List
 from app.models import Category
-from app import crud
+from app.controllers import crud
 from app.database import get_db
 from sqlalchemy.orm import Session
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import expenses, categories
+from .routes import category, expense
 from .database import Base, engine
 
 # Create database tables
@@ -18,8 +18,8 @@ app.add_middleware(
 )
 
 # Include routers without prefix (prefix is in routes)
-app.include_router(expenses.router)
-app.include_router(categories.router)
+app.include_router(expense.router)
+app.include_router(category.router)
 
 # Root endpoint for API health check
 @app.get("/")

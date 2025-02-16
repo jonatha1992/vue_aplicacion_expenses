@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from .models import ExpenseDB, CategoryDB, ExpenseCreate, Expense
+from ..models import ExpenseDB, CategoryDB, ExpenseCreate, Expense
 
 
 def create_expense(db: Session, expense: ExpenseCreate) -> Expense:

@@ -1,6 +1,7 @@
+from app.controllers import crud
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from app import crud, models, database
+from app import database
 from app.models import UserCreate, User
 from app.security import get_password_hash, verify_password, create_access_token  # define estas funciónes
 from datetime import timedelta
