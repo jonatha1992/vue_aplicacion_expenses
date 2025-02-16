@@ -19,5 +19,6 @@
         "titleBar.inactiveBackground": "#204d2f99",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "djlint.showInstallError": false
+    "djlint.showInstallError": false,
+    "postman.settings.dotenv-detection-notification-visibility": false
 }
