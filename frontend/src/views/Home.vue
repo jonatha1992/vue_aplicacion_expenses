@@ -25,15 +25,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { expenseApi } from '../services/api'
+import { useAuthStore } from '../stores/authStore'
 import ExpenseForm from '../components/ExpenseForm.vue'
 import ExpenseList from '../components/ExpenseList.vue'
 
+const authStore = useAuthStore()
 const expenses = ref([])
 const loading = ref(false)
 const error = ref(null)
 const currentExpense = ref(null)
 
 const fetchExpenses = async () => {
+    if (!authStore.isLoggedIn) return;
+
     loading.value = true
     error.value = null
     try {
@@ -105,7 +109,11 @@ const cancelEdit = () => {
     currentExpense.value = null
 }
 
-onMounted(fetchExpenses)
+onMounted(() => {
+    if (authStore.isLoggedIn) {
+        fetchExpenses()
+    }
+})
 </script>
 
 <style scoped>

@@ -5,9 +5,12 @@
                 Expense Tracker
             </h3>
             <div>
-                <!-- Si hay usuario, se muestra su username -->
-                <span v-if="user" class="text-white mr-4">Bienvenido, {{ user.username }}</span>
-                <!-- Botones de login/registro si no hay usuario -->
+                <template v-if="authStore.user">
+                    <span class="text-white mr-4">Bienvenido, {{ authStore.user.username }}</span>
+                    <button @click="handleLogout" class="px-4 py-2 bg-white text-blue-600 rounded">
+                        Logout
+                    </button>
+                </template>
                 <button v-else @click="$emit('open-auth', 'login')" class="px-4 py-2 bg-white text-blue-600 rounded">
                     Login
                 </button>
@@ -16,10 +19,13 @@
     </nav>
 </template>
 
-
 <script setup>
-import { ref } from 'vue'
-const user = ref(null)
-const emit = defineEmits(["open-auth"])
+import { useAuthStore } from '../stores/authStore';
 
+const authStore = useAuthStore();
+const emit = defineEmits(["open-auth"]);
+
+const handleLogout = () => {
+    authStore.logout();
+}
 </script>

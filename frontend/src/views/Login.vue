@@ -20,28 +20,30 @@
 <script setup>
 import { ref } from "vue";
 import { loginWithEmail, signInWithGoogle } from "../services/authService";
+import { useAuthStore } from "../stores/authStore";
 
+const authStore = useAuthStore();
 const email = ref("");
 const password = ref("");
-const error = ref(null)
-const emit = defineEmits(['close', 'open-auth'])
+const error = ref(null);
+const emit = defineEmits(['close', 'open-auth']);
 
 const handleEmailLogin = async () => {
     try {
-        const response = await loginWithEmail(email.value, password.value)
-        // Luego emite un evento o actualiza el estado para cerrar el modal.
-        console.log("Usuario logeado:", response.username)
-        // Código para cerrar el modal de login
+        const response = await loginWithEmail(email.value, password.value);
+        authStore.setUser(response.user, response.access_token);
+        emit('close');
     } catch (e) {
-        error.value = "Error en login"
-        console.error(e)
+        error.value = "Error en login";
+        console.error(e);
     }
 }
 
 const handleGoogleLogin = async () => {
     try {
-        const user = await signInWithGoogle();
-        console.log("Usuario de Google:", user);
+        const response = await signInWithGoogle();
+        authStore.setUser(response.user, response.access_token);
+        emit('close');
     } catch (e) {
         console.error("Error en Google login:", e);
     }
