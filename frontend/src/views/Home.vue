@@ -35,6 +35,7 @@ const loading = ref(false)
 const error = ref(null)
 const currentExpense = ref(null)
 
+
 const fetchExpenses = async () => {
     if (!authStore.isLoggedIn) return;
 
@@ -115,7 +116,3 @@ onMounted(() => {
     }
 })
 </script>
-
-<style scoped>
-/* Estilos opcionales para la vista Home */
-</style>

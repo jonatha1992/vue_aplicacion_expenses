@@ -42,7 +42,9 @@ const handleEmailLogin = async () => {
 const handleGoogleLogin = async () => {
     try {
         const response = await signInWithGoogle();
-        authStore.setUser(response.user, response.access_token);
+        console.log("respuesta de google", response.User);
+        authStore.setUser(response.username, response.access_token);
+
         emit('close');
     } catch (e) {
         console.error("Error en Google login:", e);

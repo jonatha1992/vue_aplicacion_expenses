@@ -22,11 +22,32 @@ export const registerWithEmail = async (email, password, displayName) => {
 
 // Login con email.
 export const loginWithEmail = async (email, password) => {
-  const result = await signInWithEmailAndPassword(auth, email, password);
-  const user = result.user;
-  // Opcional: enviar al backend si se requiere crear sesión
+  try {
+    const firebaseResult = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const firebaseUser = firebaseResult.user;
 
-  return user;
+    // Hacer la petición al backend
+    const backendResponse = await backendAPI.post("auth/login", {
+      username: email,
+      email: email,
+      password: password,
+    });
+
+    return {
+      user: {
+        username: email,
+        email: firebaseUser.email,
+      },
+      access_token: backendResponse.data.access_token,
+    };
+  } catch (error) {
+    console.error("Error en login:", error);
+    throw error;
+  }
 };
 
 export const signInWithGoogle = async () => {
@@ -54,9 +75,9 @@ export const signInWithGoogle = async () => {
         throw e;
       }
     }
-
     console.log("Backend response:", backendResponse.data);
-    return user;
+
+    return backendResponse.data;
   } catch (error) {
     console.error("Error during Google sign-in:", error);
     throw error;

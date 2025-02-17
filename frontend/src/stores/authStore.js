@@ -24,10 +24,17 @@ export const useAuthStore = defineStore("auth", {
     },
     initializeAuth() {
       const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (token && user) {
-        this.user = user;
-        this.token = token;
+      const userStr = localStorage.getItem("user");
+      // Verificar que existan valores antes de asignar
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          this.user = user;
+          this.token = token;
+        } catch (error) {
+          console.error("Error parsing user data from localStorage");
+          this.logout(); // Limpiar datos inválidos
+        }
       }
     },
   },

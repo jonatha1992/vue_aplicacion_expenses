@@ -9,6 +9,7 @@ export const useCategoryStore = defineStore("category", {
     async fetchCategories() {
       try {
         const response = await categoryApi.getAll();
+        console.log("Categories response:", response);
         this.categories = response.data;
       } catch (e) {
         console.error("Error fetching categories", e);

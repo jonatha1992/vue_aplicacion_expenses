@@ -5,8 +5,9 @@
             <template v-if="authStore.isLoggedIn">
                 <Home />
             </template>
-            <div v-else class="text-center mt-10">
-                Por favor, inicia sesión para ver tus gastos
+            <div v-else class="text-center mt-10 p-4">
+                <h2 class="text-xl font-semibold mb-4">Bienvenido a Expense Tracker</h2>
+                <p>Por favor, inicia sesión para administrar tus gastos</p>
             </div>
         </main>
 
@@ -43,7 +44,7 @@ const closeAuthModal = () => {
     showAuthModal.value = false;
 };
 
-onMounted(() => {
+onMounted(async () => {
     authStore.initializeAuth();
     if (!authStore.isLoggedIn) {
         openAuthModal("login");

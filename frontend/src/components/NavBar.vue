@@ -4,9 +4,11 @@
             <h3 class="text-2xl font-semibold text-white">
                 Expense Tracker
             </h3>
+            <template v-if="authStore.user">
+                <h3 class="text-white text-center">Bienvenido, <span class="font-bold">{{ authStore.user }}</span></h3>
+            </template>
             <div>
                 <template v-if="authStore.user">
-                    <span class="text-white mr-4">Bienvenido, {{ authStore.user.username }}</span>
                     <button @click="handleLogout" class="px-4 py-2 bg-white text-blue-600 rounded">
                         Logout
                     </button>
