@@ -1,4 +1,4 @@
-from app.controllers import get_user_by_username, create_user, get_all_user
+from app.controllers import get_user_by_username, create_user, get_all_user, get_user_by_email
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -11,8 +11,11 @@ router = APIRouter(prefix="/auth", tags=["Autenticación"])
 @router.post("/register", response_model=User)
 async def register(user_create: UserCreate, db: Session = Depends(get_db)):
     existing_user = get_user_by_username(db, user_create.username)
+    existing_email = get_user_by_email(db, user_create.email)
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already registered")
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
     hashed_pw = get_password_hash(user_create.password)
     user_create.password = hashed_pw
     new_user = create_user(db, user_create)
@@ -32,6 +35,7 @@ async def login(form_data: UserCreate, db: Session = Depends(get_db)):
         "username": user.username
     }
 
-@router.get("/login")
+# Ruta renombrada para evitar conflicto con POST /login
+@router.get("/users")
 async def list_user(db: Session = Depends(get_db)):
     return get_all_user(db)

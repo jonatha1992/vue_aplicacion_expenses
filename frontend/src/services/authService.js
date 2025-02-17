@@ -29,16 +29,36 @@ export const loginWithEmail = async (email, password) => {
   return user;
 };
 
-// Login con Google. Se registra/inicia sesión en Firebase y se manda la info al backend.
 export const signInWithGoogle = async () => {
-  const result = await signInWithPopup(auth, googleProvider);
-  console.log("respuesta de google signInWithGoogle: ", result);
-  const user = result.user;
-  const payload = {
-    username: user.displayName,
-    email: user.email,
-    password: user.uid,
-  };
-  await backendAPI.post("auth/register", payload);
-  return user;
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    console.log("Google sign-in response:", result);
+
+    const user = result.user;
+    const payload = {
+      username: user.displayName,
+      email: user.email,
+      password: user.uid,
+    };
+
+    console.log("Payload for backend:", payload);
+
+    let backendResponse;
+    try {
+      backendResponse = await backendAPI.post("auth/register", payload);
+    } catch (e) {
+      if (e.response && e.response.status === 400) {
+        // El usuario ya está autenticado, se hace POST a login
+        backendResponse = await backendAPI.post("auth/login", payload);
+      } else {
+        throw e;
+      }
+    }
+
+    console.log("Backend response:", backendResponse.data);
+    return user;
+  } catch (error) {
+    console.error("Error during Google sign-in:", error);
+    throw error;
+  }
 };

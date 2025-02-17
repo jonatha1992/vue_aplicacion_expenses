@@ -7,6 +7,9 @@ from app.models import User  # ensure the User model is imported
 def get_user_by_username(db:Session , username: str):
     return db.query(UserDB).filter(UserDB.username == username).first()
 
+def get_user_by_email(db:Session , email: str):
+    return db.query(UserDB).filter(UserDB.email == email).first()
+
 def create_user(db: Session, user_create):
     # Optionally: encode password here if needed, already hashed in user_create.password
     new_user = UserDB(
