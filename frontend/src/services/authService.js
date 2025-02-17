@@ -16,7 +16,7 @@ export const registerWithEmail = async (email, password, displayName) => {
   const result = await createUserWithEmailAndPassword(auth, email, password);
   const user = result.user;
   const payload = { username: displayName, email: user.email, password }; // En backend se debe procesar esta info
-  await backendAPI.post("/register", payload);
+  await backendAPI.post("auth/register", payload);
   return user;
 };
 
@@ -25,7 +25,7 @@ export const loginWithEmail = async (email, password) => {
   const result = await signInWithEmailAndPassword(auth, email, password);
   const user = result.user;
   // Opcional: enviar al backend si se requiere crear sesión
-  
+
   return user;
 };
 
@@ -39,6 +39,6 @@ export const signInWithGoogle = async () => {
     email: user.email,
     password: user.uid,
   };
-  await backendAPI.post("/register", payload);
+  await backendAPI.post("auth/register", payload);
   return user;
 };
