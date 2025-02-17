@@ -13,7 +13,9 @@ class ExpenseDB(Base):
     amount = Column(Float)
     date = Column(DateTime, default=datetime.utcnow)
     category_id = Column(Integer, ForeignKey("categories.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))  # Nuevo campo para referenciar al usuario
     category_rel = relationship("CategoryDB", back_populates="expenses")
+    user = relationship("UserDB", back_populates="expenses")  # Relación inversa con usuario
 
 # Pydantic models
 
@@ -22,7 +24,8 @@ class ExpenseCreate(BaseModel):
     description: str
     amount: float
     date: datetime
-    category_id: int  # Cambiado de category: CategoryBase a category_id: int
+    category_id: int  # se envía el id de la categoría
+    # Puedes agregar opcionalmente user_id aquí si lo deseas
 
     class Config:
         from_attributes = True

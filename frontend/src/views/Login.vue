@@ -10,6 +10,10 @@
             class="w-full p-2 bg-red-500 text-white rounded mb-6 flex items-center justify-center">
             <i class="fab fa-google mr-2"></i> Ingresar con Google
         </button>
+        <p class="mt-4 text-center">
+            ¿No tienes una cuenta?
+            <button @click="switchToRegister" class="text-blue-500 underline">Regístrate</button>
+        </p>
     </div>
 </template>
 
@@ -19,15 +23,20 @@ import { loginWithEmail, signInWithGoogle } from "../services/authService";
 
 const email = ref("");
 const password = ref("");
+const error = ref(null)
+const emit = defineEmits(['close', 'open-auth'])
 
 const handleEmailLogin = async () => {
     try {
-        const user = await loginWithEmail(email.value, password.value);
-        console.log("Usuario logeado:", user);
+        const response = await loginWithEmail(email.value, password.value)
+        // Luego emite un evento o actualiza el estado para cerrar el modal.
+        console.log("Usuario logeado:", response.username)
+        // Código para cerrar el modal de login
     } catch (e) {
-        console.error("Error en login:", e);
+        error.value = "Error en login"
+        console.error(e)
     }
-};
+}
 
 const handleGoogleLogin = async () => {
     try {
@@ -37,4 +46,8 @@ const handleGoogleLogin = async () => {
         console.error("Error en Google login:", e);
     }
 };
+
+const switchToRegister = () => {
+    emit('open-auth', 'register')
+}
 </script>

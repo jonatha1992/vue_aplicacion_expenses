@@ -15,6 +15,7 @@ class UserDB(Base):
     hashed_password = Column(String)
     email = Column(String, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    expenses = relationship("ExpenseDB", back_populates="user")  # Nueva relación con gastos
 
 # Esquema de usuario (Pydantic)
 class User(BaseModel):
