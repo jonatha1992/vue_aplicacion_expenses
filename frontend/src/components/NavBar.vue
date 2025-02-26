@@ -26,7 +26,7 @@
                     <template v-if="authStore.user">
                         <div class="flex items-center space-x-4">
                             <span class="text-white">
-                                Bienvenido, <span class="font-bold">{{ authStore.user }}</span>
+                                Bienvenido, <span class="font-bold">{{ authStore.user.username }}</span>
                             </span>
                             <button @click="handleLogout"
                                 class="px-4 py-2 bg-white text-blue-600 rounded hover:bg-blue-100 transition-colors">
@@ -51,7 +51,6 @@
         </div>
     </nav>
 </template>
-
 <script setup>
 import { useAuthStore } from '../stores/authStore';
 import { useRouter } from 'vue-router';
@@ -61,9 +60,13 @@ const authStore = useAuthStore();
 const emit = defineEmits(['open-auth']);
 
 const handleLogout = async () => {
-    await authStore.logout();
-    router.push('/');
-}
+    try {
+        await authStore.logout();
+        router.push('/');
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+};
 </script>
 
 <style scoped>

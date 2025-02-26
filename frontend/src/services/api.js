@@ -10,13 +10,25 @@ const api = axios.create({
 
 // Interceptor para agregar el token a todas las peticiones
 api.interceptors.request.use((config) => {
-  const authStore = useAuthStore();
-  const token = authStore.getToken;
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+// Interceptor para manejar errores de autenticación
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const authStore = useAuthStore();
+      authStore.logout();
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const expenseApi = {
   getAll: () => api.get("/expenses/"),

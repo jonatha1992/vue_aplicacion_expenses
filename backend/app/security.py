@@ -1,7 +1,8 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
-import jwt
+from jwt import PyJWT
+from jwt.exceptions import InvalidTokenError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from .controllers.user_controller import get_user_by_username
@@ -16,6 +17,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+# Create JWT instance
+jwt = PyJWT()
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
@@ -41,7 +45,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db = Depends(get
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-    except jwt.JWTError:
+    except InvalidTokenError:
         raise credentials_exception
     user = get_user_by_username(db, username=username)
     if user is None:

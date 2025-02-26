@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { getAuth } from "firebase/auth"; // Add this import
 import Dashboard from "../views/Dashboard.vue";
 import ExpensesManagement from "../views/ExpensesManagement.vue";
 import Login from "../views/Login.vue";
-import { useAuthStore } from "../stores/authStore"; // A
+import { useAuthStore } from "../stores/authStore";
 import Register from "../views/Register.vue";
 
 const routes = [
@@ -41,12 +42,18 @@ const router = createRouter({
 
 // Agrega protección de rutas
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    next("/login");
-  } else {
-    next();
-  }
+  const auth = getAuth();
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  auth.onAuthStateChanged((user) => {
+    if (requiresAuth && !user) {
+      next("/login");
+    } else if (!requiresAuth && user) {
+      next("/expenses");
+    } else {
+      next();
+    }
+  });
 });
 
 export default router;
