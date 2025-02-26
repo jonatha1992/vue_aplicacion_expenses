@@ -22,6 +22,7 @@ export const registerWithEmail = async (email, password, displayName) => {
     );
     const firebaseUser = firebaseResult.user;
 
+    console.log("datos de form user:", email, password, displayName);
     // Then register with backend
     const payload = {
       username: email, // Cambiado: usar email como username para consistencia
@@ -90,8 +91,10 @@ export const signInWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
 
+    console.log("Google user:", user);
+
     const payload = {
-      username: user.email, // Usar email como username
+      username: user.displayName, // Usar email como username
       email: user.email,
       password: user.uid,
     };
