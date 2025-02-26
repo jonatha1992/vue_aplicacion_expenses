@@ -1,5 +1,5 @@
 from app.controllers import get_user_by_username, create_user, get_all_user, get_user_by_email
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import UserCreate, User
@@ -25,14 +25,22 @@ async def register(user_create: UserCreate, db: Session = Depends(get_db)):
 async def login(form_data: UserCreate, db: Session = Depends(get_db)):
     user = get_user_by_username(db, form_data.username)
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales inválidas"
+        )
+    
     access_token_expires = timedelta(minutes=30)
-    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
-    # Retornamos además el nombre del usuario para el frontend
+    access_token = create_access_token(
+        data={"sub": user.username},
+        expires_delta=access_token_expires
+    )
+    
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "username": user.username
+        "username": user.username,
+        "user_id": user.id
     }
 
 # Ruta renombrada para evitar conflicto con POST /login

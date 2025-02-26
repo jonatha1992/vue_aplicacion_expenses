@@ -31,7 +31,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { loginWithEmail, signInWithGoogle } from "../services/authService";
+import { loginWithEmail, signInWithGoogle } from "../services/authService";  // Importar de authService
 import { useAuthStore } from "../stores/authStore";
 import { useRouter } from 'vue-router';
 
@@ -39,22 +39,25 @@ const router = useRouter();
 const authStore = useAuthStore();
 const email = ref("");
 const password = ref("");
-const error = ref(null);
+const error = ref("");
 const loading = ref(false);
 const emit = defineEmits(['close', 'open-auth']);
 
 const handleEmailLogin = async () => {
     loading.value = true;
-    error.value = null;
+    error.value = "";
 
     try {
         const response = await loginWithEmail(email.value, password.value);
-        authStore.setUser(response.user, response.access_token);
-        emit('close');
-        router.push('/home');
+        if (response.access_token) {
+            authStore.setUser(response.user, response.access_token);
+            emit('close');
+        } else {
+            throw new Error('No se recibió token de acceso');
+        }
     } catch (e) {
         error.value = e.response?.data?.detail || 'Error en login';
-        console.error(e);
+        console.error('Error completo:', e);
     } finally {
         loading.value = false;
     }
@@ -62,16 +65,19 @@ const handleEmailLogin = async () => {
 
 const handleGoogleLogin = async () => {
     loading.value = true;
-    error.value = null;
+    error.value = "";
 
     try {
-        const response = await signInWithGoogle();
-        authStore.setUser(response.username, response.access_token);
-        emit('close');
-        router.push('/home');
+        const response = await signInWithGoogle();  // Usar la función importada de authService
+        if (response.access_token) {
+            authStore.setUser(response.user, response.access_token);
+            emit('close');
+        } else {
+            throw new Error('No se recibió token de acceso');
+        }
     } catch (e) {
-        error.value = e.response?.data?.detail || 'Error en el inicio de sesión con Google';
-        console.error("Error en Google login:", e);
+        error.value = "Error al iniciar sesión con Google";
+        console.error('Error completo:', e);
     } finally {
         loading.value = false;
     }

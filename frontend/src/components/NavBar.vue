@@ -51,7 +51,6 @@
         </div>
     </nav>
 </template>
-
 <script setup>
 import { useAuthStore } from '../stores/authStore';
 import { useRouter } from 'vue-router';
@@ -61,9 +60,13 @@ const authStore = useAuthStore();
 const emit = defineEmits(['open-auth']);
 
 const handleLogout = async () => {
-    await authStore.logout();
-    router.push('/');
-}
+    try {
+        await authStore.logout();
+        router.push('/');
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+};
 </script>
 
 <style scoped>

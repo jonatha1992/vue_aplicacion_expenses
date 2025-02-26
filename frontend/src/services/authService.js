@@ -37,9 +37,10 @@ export const loginWithEmail = async (email, password) => {
       password: password,
     });
 
+    // Asegurarnos de que devolvemos el objeto en el formato correcto
     return {
       user: {
-        username: email,
+        username: backendResponse.data.username,
         email: firebaseUser.email,
       },
       access_token: backendResponse.data.access_token,
@@ -53,31 +54,36 @@ export const loginWithEmail = async (email, password) => {
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    console.log("Google sign-in response:", result);
-
     const user = result.user;
+
     const payload = {
-      username: user.displayName,
+      username: user.email, // Usar email como username
       email: user.email,
       password: user.uid,
     };
 
-    console.log("Payload for backend:", payload);
-
     let backendResponse;
     try {
-      backendResponse = await backendAPI.post("auth/register", payload);
+      // Intentar login primero
+      backendResponse = await backendAPI.post("auth/login", payload);
     } catch (e) {
-      if (e.response && e.response.status === 400) {
-        // El usuario ya está autenticado, se hace POST a login
+      if (e.response?.status === 401) {
+        // Si falla el login, intentar registro
+        await backendAPI.post("auth/register", payload);
+        // Y luego login
         backendResponse = await backendAPI.post("auth/login", payload);
       } else {
         throw e;
       }
     }
-    console.log("Backend response:", backendResponse.data);
 
-    return backendResponse.data;
+    return {
+      user: {
+        username: backendResponse.data.username,
+        email: user.email,
+      },
+      access_token: backendResponse.data.access_token,
+    };
   } catch (error) {
     console.error("Error during Google sign-in:", error);
     throw error;
