@@ -13,11 +13,45 @@ const backendAPI = axios.create({
 
 // Registro con email. Se usa la contraseña para Firebase y también se envía al backend.
 export const registerWithEmail = async (email, password, displayName) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password);
-  const user = result.user;
-  const payload = { username: displayName, email: user.email, password }; // En backend se debe procesar esta info
-  await backendAPI.post("auth/register", payload);
-  return user;
+  try {
+    // First register with Firebase
+    const firebaseResult = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const firebaseUser = firebaseResult.user;
+
+    // Then register with backend
+    const payload = {
+      username: email, // Cambiado: usar email como username para consistencia
+      email: firebaseUser.email,
+      password: password,
+      display_name: displayName, // Agregado: enviar displayName como campo separado
+    };
+
+    // Register in backend
+    await backendAPI.post("auth/register", payload);
+
+    // After registration, we need to login to get the token
+    const loginResponse = await backendAPI.post("auth/login", {
+      username: email, // Cambiado: usar email como username
+      email: email,
+      password: password,
+    });
+
+    // Return the same structure as Google login
+    return {
+      user: {
+        username: displayName,
+        email: firebaseUser.email,
+      },
+      access_token: loginResponse.data.access_token,
+    };
+  } catch (error) {
+    console.error("Error in registration:", error);
+    throw error;
+  }
 };
 
 // Login con email.

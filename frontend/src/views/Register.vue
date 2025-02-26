@@ -52,18 +52,12 @@ const handleEmailRegister = async () => {
             displayName.value
         );
 
-        // Store user data
-        authStore.setUser(
-            {
-                username: displayName.value,
-                email: emailRegister.value
-            },
-            response.access_token
-        );
-
+        // Now we can safely access the response structure
+        authStore.setUser(response.user, response.access_token);
         emit('close');
         router.push('/home');
     } catch (e) {
+        console.error('Registration error:', e);
         if (e.response?.data?.detail) {
             error.value = e.response.data.detail;
         } else if (e.code) {
@@ -76,7 +70,7 @@ const handleEmailRegister = async () => {
             };
             error.value = errorMessages[e.code] || 'Error en el registro';
         } else {
-            error.value = 'Error en el registro';
+            error.value = 'Error en el registro. Por favor, intente nuevamente.';
         }
     } finally {
         loading.value = false;
