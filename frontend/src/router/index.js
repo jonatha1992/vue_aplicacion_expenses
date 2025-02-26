@@ -1,15 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { getAuth } from "firebase/auth"; // Add this import
+import Home from "../views/Home.vue";
 import Dashboard from "../views/Dashboard.vue";
 import ExpensesManagement from "../views/ExpensesManagement.vue";
 import Login from "../views/Login.vue";
-import { useAuthStore } from "../stores/authStore";
 import Register from "../views/Register.vue";
+import { useAuthStore } from "../stores/authStore";
 
 const routes = [
   {
     path: "/",
-    redirect: "/dashboard",
+    name: "Home",
+    component: Home,
+    meta: { redirectIfAuth: true },
   },
   {
     path: "/dashboard",
@@ -40,20 +42,28 @@ const router = createRouter({
   routes,
 });
 
-// Agrega protección de rutas
 router.beforeEach((to, from, next) => {
-  const auth = getAuth();
+  const authStore = useAuthStore();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const redirectIfAuth = to.matched.some(
+    (record) => record.meta.redirectIfAuth
+  );
 
-  auth.onAuthStateChanged((user) => {
-    if (requiresAuth && !user) {
-      next("/login");
-    } else if (!requiresAuth && user) {
-      next("/expenses");
-    } else {
-      next();
-    }
-  });
+  if (redirectIfAuth && authStore.isLoggedIn) {
+    // Si está autenticado y va al home, redirigir a expenses
+    next("/expenses");
+  } else if (requiresAuth && !authStore.isLoggedIn) {
+    // Si requiere auth y no está autenticado, redirigir a login
+    next("/login");
+  } else if (
+    authStore.isLoggedIn &&
+    (to.path === "/login" || to.path === "/register")
+  ) {
+    // Si está autenticado y va a login/register, redirigir a expenses
+    next("/expenses");
+  } else {
+    next();
+  }
 });
 
 export default router;

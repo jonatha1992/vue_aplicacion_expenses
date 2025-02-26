@@ -52,6 +52,8 @@ const handleEmailLogin = async () => {
         if (response.access_token) {
             authStore.setUser(response.user, response.access_token);
             emit('close');
+            router.push('/expenses'); // Agregar esta línea
+
         } else {
             throw new Error('No se recibió token de acceso');
         }
@@ -72,6 +74,8 @@ const handleGoogleLogin = async () => {
         if (response.access_token) {
             authStore.setUser(response.user, response.access_token);
             emit('close');
+            router.push('/expenses'); // Agregar esta línea
+
         } else {
             throw new Error('No se recibió token de acceso');
         }

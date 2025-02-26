@@ -1,14 +1,10 @@
 <template>
-    <NavBar @open-auth="openAuthModal" />
     <div id="app" class="min-h-screen bg-gray-100">
+        <NavBar @open-auth="openAuthModal" />
+
         <main class="p-4">
-            <template v-if="authStore.isLoggedIn">
-                <Home />
-            </template>
-            <div v-else class="text-center mt-10 p-4">
-                <h2 class="text-xl font-semibold mb-4">Bienvenido a Expense Tracker</h2>
-                <p>Por favor, inicia sesión para administrar tus gastos</p>
-            </div>
+            <!-- Reemplazar el Home fijo por router-view -->
+            <router-view></router-view>
         </main>
 
         <!-- Modal for authentication -->
@@ -24,12 +20,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, provide } from "vue";
 import { useAuthStore } from "./stores/authStore";
 import NavBar from "./components/NavBar.vue";
-import Home from "./views/Home.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
+import Home from "./views/Home.vue";
 
 const showAuthModal = ref(false);
 const authType = ref("login");
@@ -39,6 +35,7 @@ const openAuthModal = (type) => {
     authType.value = type;
     showAuthModal.value = true;
 };
+provide('openAuthModal', openAuthModal); // Proporcionar la función para los componentes hijos
 
 const closeAuthModal = () => {
     showAuthModal.value = false;
