@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import auth_routes, category_routes, expense_routes
 from .database import Base, engine
+import os
+import uvicorn
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -11,7 +13,9 @@ app = FastAPI(title="Expense Tracker API")
 # Configuración CORS actualizada
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://localhost"],  # Agregados ambos orígenes
+    allow_origins=[
+        os.environ.get("API_FRONTEND_URL", "http://localhost:8000"),  # Firebase hosting URL
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,3 +30,7 @@ app.include_router(auth_routes.router)
 @app.get("/")
 async def root():
     return {"status": "active", "message": "Welcome to the Expenses API"}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))  # Cloud Run usa PORT=8080
+    uvicorn.run(app, host="0.0.0.0", port=port)

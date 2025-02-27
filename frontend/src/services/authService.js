@@ -8,7 +8,7 @@ import {
 } from "./firebase";
 
 const backendAPI = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: process.env.APP_API_BACKEND_URL || "http://localhost:8080",
 });
 
 // Registro con email. Se usa la contraseña para Firebase y también se envía al backend.

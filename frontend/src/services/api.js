@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../stores/authStore.js";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000", // Cambiado a localhost
+  baseURL: process.env.APP_API_BACKEND_URL || "http://localhost:8080", // Cambiado a localhost
   headers: {
     "Content-Type": "application/json",
   },

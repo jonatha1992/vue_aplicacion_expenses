@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: expenses-backend
     ports:
-      - "8000:8000"  # Cambiado para permitir acceso desde localhost
+      - 8080  # Cambiado para permitir acceso desde localhost
     volumes:
       - ./backend:/app
       - ./backend/data:/app/data

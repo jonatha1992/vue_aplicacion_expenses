@@ -15,6 +15,11 @@ RUN poetry install --no-dev
 # Copiar el resto del código de la aplicación
 COPY . .
 
-EXPOSE 8000
+# Usar variable de entorno PORT de Cloud Run
+ENV PORT=8080
 
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Exponer puerto dinámicamente
+EXPOSE ${PORT}
+
+
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "localhost", "--port", "8080"]
