@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: expenses-backend
+    ports:
+      - "8000:8000"  # Cambiado para permitir acceso desde localhost
+    volumes:
+      - ./backend:/app
+      - ./backend/data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - expenses-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: expenses-frontend
+    ports:
+      - "8080:80"  # Cambiado para mapear correctamente el puerto
+    environment:
+      - VUE_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - expenses-network
+
+networks:
+  expenses-network:
+    driver: bridge

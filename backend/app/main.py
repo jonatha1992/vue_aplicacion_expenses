@@ -8,10 +8,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Expense Tracker API")
 
-# Configure CORS
+# Configuración CORS actualizada
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Cambiado de 8081 a 8080
+    allow_origins=["http://localhost:8080", "http://localhost"],  # Agregados ambos orígenes
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
