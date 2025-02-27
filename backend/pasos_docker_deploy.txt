@@ -1,0 +1,7 @@
+docker build -t us-central1-docker.pkg.dev/expenses-traker-f3fcc/expenses-repo/expenses-backend:latest . ; `
+docker push us-central1-docker.pkg.dev/expenses-traker-f3fcc/expenses-repo/expenses-backend:latest ; `
+gcloud run deploy expenses-backend `
+    --image us-central1-docker.pkg.dev/expenses-traker-f3fcc/expenses-repo/expenses-backend:latest `
+    --platform managed `
+    --region us-central1 `
+    --allow-unauthenticated

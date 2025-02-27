@@ -1,12 +1,7 @@
-import axios from "axios";
+import { createAPI } from "./apiConfig";
 import { useAuthStore } from "../stores/authStore.js";
 
-const api = axios.create({
-  baseURL: process.env.APP_API_BACKEND_URL || "http://localhost:8080", // Cambiado a localhost
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const api = createAPI();
 
 // Interceptor para agregar el token a todas las peticiones
 api.interceptors.request.use((config) => {

@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   auth,
   googleProvider,
@@ -6,10 +5,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "./firebase";
+import { createAPI } from "./apiConfig";
 
-const backendAPI = axios.create({
-  baseURL: process.env.APP_API_BACKEND_URL || "http://localhost:8080",
-});
+const api = createAPI();
 
 // Registro con email. Se usa la contraseña para Firebase y también se envía al backend.
 export const registerWithEmail = async (email, password, displayName) => {
@@ -32,10 +30,10 @@ export const registerWithEmail = async (email, password, displayName) => {
     };
 
     // Register in backend
-    await backendAPI.post("auth/register", payload);
+    await api.post("auth/register", payload);
 
     // After registration, we need to login to get the token
-    const loginResponse = await backendAPI.post("auth/login", {
+    const loginResponse = await api.post("auth/login", {
       username: email, // Cambiado: usar email como username
       email: email,
       password: password,
@@ -66,7 +64,7 @@ export const loginWithEmail = async (email, password) => {
     const firebaseUser = firebaseResult.user;
 
     // Hacer la petición al backend
-    const backendResponse = await backendAPI.post("auth/login", {
+    const backendResponse = await api.post("auth/login", {
       username: email,
       email: email,
       password: password,
@@ -102,13 +100,13 @@ export const signInWithGoogle = async () => {
     let backendResponse;
     try {
       // Intentar login primero
-      backendResponse = await backendAPI.post("auth/login", payload);
+      backendResponse = await api.post("auth/login", payload);
     } catch (e) {
       if (e.response?.status === 401) {
         // Si falla el login, intentar registro
-        await backendAPI.post("auth/register", payload);
+        await api.post("auth/register", payload);
         // Y luego login
-        backendResponse = await backendAPI.post("auth/login", payload);
+        backendResponse = await api.post("auth/login", payload);
       } else {
         throw e;
       }

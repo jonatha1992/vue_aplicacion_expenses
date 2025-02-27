@@ -14,7 +14,7 @@ app = FastAPI(title="Expense Tracker API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        os.environ.get("API_FRONTEND_URL", "http://localhost:8000"),  # Firebase hosting URL
+        "https://expenses-traker-f3fcc.web.app", "http://localhost:8000",  # Firebase hosting URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
