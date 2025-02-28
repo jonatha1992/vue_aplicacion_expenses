@@ -1,5 +1,6 @@
 <template>
     <div class="max-w-md mx-auto p-4">
+        <Loading :show="loading" message="Registrando usuario..." />
         <h1 class="text-2xl font-bold mb-4">Registro</h1>
 
         <!-- Add error display -->
@@ -31,6 +32,7 @@ import { ref } from "vue";
 import { registerWithEmail } from "../services/authService";
 import { useAuthStore } from "../stores/authStore";
 import { useRouter } from 'vue-router';
+import Loading from '../components/Loading.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

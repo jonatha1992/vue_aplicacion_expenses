@@ -1,5 +1,6 @@
 <template>
     <div class="max-w-md mx-auto p-4">
+        <Loading :show="loading" message="Iniciando sesión..." />
         <h1 class="text-2xl font-bold mb-4">Login</h1>
 
         <!-- Error Alert -->
@@ -34,6 +35,7 @@ import { ref } from "vue";
 import { loginWithEmail, signInWithGoogle } from "../services/authService";  // Importar de authService
 import { useAuthStore } from "../stores/authStore";
 import { useRouter } from 'vue-router';
+import Loading from '../components/Loading.vue'; // Importar el componente
 
 const router = useRouter();
 const authStore = useAuthStore();
