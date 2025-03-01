@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from "../views/Dashboard.vue";
 import ExpensesManagement from "../views/ExpensesManagement.vue";
-import Login from "../views/Login.vue";
-import Register from "../views/Register.vue";
 import { useAuthStore } from "../stores/authStore";
 
 const routes = [
@@ -25,16 +23,7 @@ const routes = [
     component: ExpensesManagement,
     meta: { requiresAuth: true },
   },
-  {
-    path: "/login",
-    name: "Login",
-    component: Login,
-  },
-  {
-    path: "/register",
-    name: "Register",
-    component: Register,
-  },
+  // Eliminamos las rutas de login y register ya que usaremos modales
 ];
 
 const router = createRouter({
@@ -49,17 +38,11 @@ router.beforeEach((to, from, next) => {
     (record) => record.meta.redirectIfAuth
   );
 
-  if (redirectIfAuth && authStore.isLoggedIn) {
-    // Si está autenticado y va al home, redirigir a expenses
-    next("/expenses");
-  } else if (requiresAuth && !authStore.isLoggedIn) {
-    // Si requiere auth y no está autenticado, redirigir a login
-    next("/login");
-  } else if (
-    authStore.isLoggedIn &&
-    (to.path === "/login" || to.path === "/register")
-  ) {
-    // Si está autenticado y va a login/register, redirigir a expenses
+  if (requiresAuth && !authStore.isLoggedIn) {
+    // Si requiere autenticación y no está autenticado, permanece en la ruta actual
+    // y el modal se mostrará automáticamente
+    next(false);
+  } else if (redirectIfAuth && authStore.isLoggedIn) {
     next("/expenses");
   } else {
     next();
