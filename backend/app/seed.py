@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
 from .models import CategoryDB
 from .database import SessionLocal, engine, Base
+from .models import CategoryDB, CategoryType
 
-# List of default categories
-DEFAULT_CATEGORIES = [
+
+
+
+DEFAULT_CATEGORIES = {
+    CategoryType.EXPENSE: [
     "Alimentación",
     "Transporte",
     "Servicios",
@@ -14,30 +18,27 @@ DEFAULT_CATEGORIES = [
     "Hogar",
     "Tecnología",
     "Otros"
-]
+    ],
+    CategoryType.INCOME: [
+        "Salario",
+        "Freelance",
+        "Inversiones",
+        "Otros ingresos"
+    ]
+}
 
-def init_categories():
-    db = SessionLocal()
-    try:
-        # Check if categories already exist
-        existing_categories = db.query(CategoryDB).all()
-        if not existing_categories:
-            print("Iniciando carga de categorías...")
-            for category_name in DEFAULT_CATEGORIES:
-                category = CategoryDB(name=category_name)
+
+def init_categories(db: Session):
+    for type, categories in DEFAULT_CATEGORIES.items():
+        for name in categories:
+            if not db.query(CategoryDB).filter_by(name=name, type=type).first():
+                category = CategoryDB(name=name, type=type)
                 db.add(category)
-                print(f"Agregada categoría: {category_name}")
-            db.commit()
-            print("Categorías agregadas exitosamente!")
-        else:
-            print("Las categorías ya existen en la base de datos.")
-    except Exception as e:
-        print(f"Error al inicializar categorías: {e}")
-        db.rollback()
-    finally:
-        db.close()
+    db.commit()
 
 if __name__ == "__main__":
     print("Creando tablas si no existen...")
     Base.metadata.create_all(bind=engine)
-    init_categories()
+    db = SessionLocal()
+    init_categories(db)
+    db.close()

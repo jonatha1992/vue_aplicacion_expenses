@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import auth_routes, category_routes, expense_routes
+from .routes import auth_routes, category_routes, expense_routes , wallet_routes , shared_expense_routes
 from .database import Base, engine
 import os
 import uvicorn
@@ -26,6 +26,8 @@ app.add_middleware(
 app.include_router(expense_routes.router)
 app.include_router(category_routes.router)
 app.include_router(auth_routes.router)
+app.include_router(wallet_routes.router)
+app.include_router(shared_expense_routes.router)
 
 # Root endpoint for API health check
 @app.get("/")

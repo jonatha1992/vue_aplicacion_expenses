@@ -13,7 +13,7 @@
                         <div class="flex flex-col">
                             <span
                                 class="text-white text-xl font-bold group-hover:text-blue-200 transition-colors duration-200">
-                                Gastos
+                                Expenses Traker
                             </span>
                             <span v-if="authStore.user?.username" class="text-blue-200 text-sm font-medium">
                                 {{ authStore.user.username }}
