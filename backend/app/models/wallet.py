@@ -6,7 +6,7 @@ from .base import Base
 class WalletDB(Base):
     __tablename__ = "wallets"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, index=True)
     balance = Column(Float, default=0)
     total_income = Column(Float, default=0)
     total_expense = Column(Float, default=0)
