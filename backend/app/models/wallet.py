@@ -18,6 +18,9 @@ class WalletDB(Base):
     # Relaciones uno a muchos
     expenses = relationship("ExpenseDB", back_populates="wallet", cascade="all, delete-orphan")
     incomes = relationship("IncomeDB", back_populates="wallet", cascade="all, delete-orphan")
+    
+    # Add the missing relationship for shared expenses
+    shared_expenses = relationship("SharedExpenseDB", back_populates="wallet", cascade="all, delete-orphan")
 
 class WalletBase(BaseModel):
     balance: float
