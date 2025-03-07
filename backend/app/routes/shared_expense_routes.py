@@ -1,10 +1,9 @@
 # backend/app/routes/shared_expense_routes.py
-from app.models.shared_expense import SharedExpenseDB
 from fastapi import APIRouter, HTTPException, Depends
 from app.security import get_current_user
 from typing import List
 from sqlalchemy.orm import Session
-from app.models import SharedExpense, SharedExpenseCreate, UserDB, SharedExpenseStatus
+from app.models import SharedExpense, SharedExpenseCreate, UserDB, SharedExpenseStatus , ExpenseDB , SharedExpenseDB
 from app.database import get_db
 from datetime import datetime
 
@@ -82,3 +81,32 @@ async def delete_shared_expense(
     db.delete(shared_expense)
     db.commit()
     return {"message": "Shared expense deleted successfully"}
+
+@router.post("/{expense_id}/share/", response_model=SharedExpense)
+async def share_expense(
+    expense_id: int,
+    user_id: int,
+    amount: float,
+    db: Session = Depends(get_db),
+    current_user: UserDB = Depends(get_current_user)
+):
+    from app.models.wallet import WalletDB  # si no está importado aún
+    # Verificar que el gasto pertenece al usuario actual usando join con la wallet
+    expense = (
+        db.query(ExpenseDB)
+          .join(ExpenseDB.wallet)
+          .filter(
+            ExpenseDB.id == expense_id,
+            WalletDB.user_id == current_user.id
+          )
+          .first()
+    )
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    
+    shared_expense = SharedExpenseCreate(
+        expense_id=expense_id,
+        wallet_id=expense.wallet_id,
+        amount=amount
+    )
+    return create_shared_expense(db, shared_expense, current_user.id)

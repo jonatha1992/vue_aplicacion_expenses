@@ -1,23 +1,4 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#2f7145",
-        "activityBar.background": "#2f7145",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#a48ed0",
-        "activityBarBadge.foreground": "#15202b",
-        "commandCenter.border": "#e7e7e799",
-        "sash.hoverBorder": "#2f7145",
-        "statusBar.background": "#204d2f",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#2f7145",
-        "statusBarItem.remoteBackground": "#204d2f",
-        "statusBarItem.remoteForeground": "#e7e7e7",
-        "titleBar.activeBackground": "#204d2f",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#204d2f99",
-        "titleBar.inactiveForeground": "#e7e7e799"
-    },
     "peacock.color": "#204d2f",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#2f7145",
@@ -40,4 +21,13 @@
     },
     "djlint.showInstallError": false,
     "postman.settings.dotenv-detection-notification-visibility": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./backend",
+        "-p",
+        "*test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true,
 }

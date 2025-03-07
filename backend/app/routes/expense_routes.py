@@ -16,27 +16,34 @@ async def list_expenses(
 ):
     return get_all_expenses(db=db, user_id=current_user.id)
 
+# @router.post("/", response_model=Expense)
+# async def add_expense(
+#     expense: ExpenseCreate,
+#     db: Session = Depends(get_db),
+#     current_user: UserDB = Depends(get_current_user)
+# ):
+#     # Validate installment data
+#     if expense.expense_type == ExpenseType.INSTALLMENT:
+#         if not expense.payment_frequency:
+#             raise HTTPException(
+#                 status_code=400, 
+#                 detail="Payment frequency required for installment expenses"
+#             )
+#         if not expense.installments_number:
+#             raise HTTPException(
+#                 status_code=400,
+#                 detail="Number of installments required"
+#             )
+    
+#     return create_expense(db=db, expense=expense, user_id=current_user.id)
+
 @router.post("/", response_model=Expense)
 async def add_expense(
     expense: ExpenseCreate,
     db: Session = Depends(get_db),
     current_user: UserDB = Depends(get_current_user)
 ):
-    # Validate installment data
-    if expense.expense_type == ExpenseType.INSTALLMENT:
-        if not expense.payment_frequency:
-            raise HTTPException(
-                status_code=400, 
-                detail="Payment frequency required for installment expenses"
-            )
-        if not expense.installments_number:
-            raise HTTPException(
-                status_code=400,
-                detail="Number of installments required"
-            )
-    
     return create_expense(db=db, expense=expense, user_id=current_user.id)
-
 @router.put("/{expense_id}/", response_model=Expense)
 async def modify_expense(
     expense_id: int,
@@ -81,7 +88,7 @@ async def share_expense(
     
     shared_expense = SharedExpenseCreate(
         expense_id=expense_id,
-        user_id=user_id,
+        wallet_id=expense.wallet_id,
         amount=amount
     )
     return create_shared_expense(db, shared_expense, current_user.id)

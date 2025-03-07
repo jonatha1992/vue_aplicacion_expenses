@@ -13,7 +13,6 @@ def create_expense(db: Session, expense: ExpenseCreate, user_id: int) -> Expense
         amount=expense.amount,
         date=expense.date,
         category_id=expense.category_id,  # Cambiado para usar directamente el ID
-        user_id=user_id,  # Agregar user_id
         wallet_id=wallet.id,
         expense_type=expense.expense_type,
         payment_frequency=expense.payment_frequency,
