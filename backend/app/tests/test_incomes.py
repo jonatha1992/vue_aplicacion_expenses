@@ -2,16 +2,17 @@ from fastapi.testclient import TestClient
 from datetime import datetime
 
 def test_create_income(client, authentication_token):
+    current_date = datetime.now()
     income_data = {
         "amount": 1000.0,
-        "source": "Test income",  # Cambiado description por source
-        "date": datetime.now().isoformat(),
+        "source": "Test income",
+        "date": current_date.isoformat(),  # Convertir a string ISO format
         "category_id": 3,
-        "wallet_id": 1  # Agregado campo requerido
+        "wallet_id": 1
     }
     headers = {"Authorization": f"Bearer {authentication_token}"}
     response = client.post("/incomes/", json=income_data, headers=headers)
-    assert response.status_code == 200  # Cambiado de 201 a 200
+    assert response.status_code == 200
     data = response.json()
     assert data["amount"] == income_data["amount"]
     assert data["source"] == income_data["source"]

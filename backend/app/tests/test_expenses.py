@@ -53,3 +53,39 @@ def test_get_expenses_by_date_range(client, authentication_token):
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
+
+def test_delete_expense(client, authentication_token, test_user):
+    # First create an expense to delete
+    expense_data = {
+        "description": "Expense to delete",
+        "amount": 100.0,
+        "date": datetime.now().isoformat(),
+        "category_id": 1,
+        "expense_type": "único"
+    }
+    headers = {"Authorization": f"Bearer {authentication_token}"}
+    
+    # Create the expense
+    create_response = client.post("/expenses/", json=expense_data, headers=headers)
+    assert create_response.status_code == 200
+    created_expense = create_response.json()
+    
+    # Delete the expense
+    delete_response = client.delete(f"/expenses/{created_expense['id']}/", headers=headers)
+    assert delete_response.status_code == 200
+    
+    # Verify expense was deleted by checking the expenses list
+    list_response = client.get("/expenses/", headers=headers)
+    assert list_response.status_code == 200
+    expenses = list_response.json()
+    assert all(expense["id"] != created_expense["id"] for expense in expenses)
+
+
+def test_delete_expense_unauthorized(client):
+    # Try to delete without authentication
+    response = client.delete("/expenses/1/")
+    assert response.status_code == 401
+
+
+
+

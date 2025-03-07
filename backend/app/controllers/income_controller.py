@@ -2,12 +2,19 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from ..models import IncomeDB, WalletDB
 from datetime import datetime
+from pydantic import parse_obj_as
 
 def create_income(db: Session, income_data: dict, wallet_id: int) -> IncomeDB:
+    # Asegurarse de que la fecha es un objeto datetime
+    if isinstance(income_data.get("date"), str):
+        income_data["date"] = datetime.fromisoformat(income_data["date"].replace("Z", "+00:00"))
+    elif not income_data.get("date"):
+        income_data["date"] = datetime.utcnow()
+
     new_income = IncomeDB(
         amount=income_data["amount"],
         source=income_data["source"],
-        date=income_data.get("date", datetime.utcnow()),
+        date=income_data["date"],
         category_id=income_data["category_id"],
         wallet_id=wallet_id
     )
