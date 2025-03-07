@@ -1,7 +1,8 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from ..models import ExpenseDB, CategoryDB, ExpenseCreate, Expense, UserDB , ExpenseType
-from .wallet_controller import get_or_create_wallet  # Direct import
+from ..models import ExpenseDB, CategoryDB, ExpenseCreate, Expense, UserDB, ExpenseType
+from .wallet_controller import get_or_create_wallet
+from datetime import datetime
 
 
 def create_expense(db: Session, expense: ExpenseCreate, user_id: int) -> Expense:
@@ -59,7 +60,7 @@ def update_expense(db: Session, expense_id: int, expense_update: ExpenseCreate) 
     wallet = db_expense.wallet
     
     # If changing from/to installment/fixed, update wallet totals
-    if db_expense.expense_type.is_(expense_update.expense_type) is False:
+    if db_expense.expense_type != expense_update.expense_type:
         if db_expense.expense_type in [ExpenseType.FIXED, ExpenseType.INSTALLMENT]:
             wallet.fixed_expense_total -= db_expense.amount
             if db_expense.expense_type == ExpenseType.INSTALLMENT:
@@ -71,7 +72,10 @@ def update_expense(db: Session, expense_id: int, expense_update: ExpenseCreate) 
                 wallet.monthly_installments += expense_update.amount / expense_update.installments_number
     
     # Update expense fields
-    for key, value in expense_update.dict(exclude={'id'}).items():
+    update_dict = expense_update.dict(exclude={'id', 'created_at', 'updated_at'})
+    update_dict['updated_at'] = datetime.utcnow()
+    
+    for key, value in update_dict.items():
         setattr(db_expense, key, value)
     
     db.commit()

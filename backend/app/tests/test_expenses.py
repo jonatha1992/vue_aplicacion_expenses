@@ -81,6 +81,41 @@ def test_delete_expense(client, authentication_token, test_user):
     assert all(expense["id"] != created_expense["id"] for expense in expenses)
 
 
+def test_update_expense(client, authentication_token, test_user):
+    # First create an expense to update
+    expense_data = {
+        "description": "Original expense",
+        "amount": 100.0,
+        "date": datetime.now().isoformat(),
+        "category_id": 1,
+        "expense_type": "único"
+    }
+    headers = {"Authorization": f"Bearer {authentication_token}"}
+    
+    # Create the expense
+    create_response = client.post("/expenses/", json=expense_data, headers=headers)
+    assert create_response.status_code == 200
+    created_expense = create_response.json()
+    
+    # Update data
+    update_data = {
+        "description": "Updated expense",
+        "amount": 150.0,
+        "date": datetime.now().isoformat(),
+        "category_id": 1,
+        "expense_type": "único"
+    }
+    
+    # Update the expense
+    update_response = client.put(f"/expenses/{created_expense['id']}/", json=update_data, headers=headers)
+    assert update_response.status_code == 200
+    updated_expense = update_response.json()
+    
+    # Verify the expense was updated correctly
+    assert updated_expense["description"] == update_data["description"]
+    assert updated_expense["amount"] == update_data["amount"]
+    assert updated_expense["id"] == created_expense["id"]
+
 def test_delete_expense_unauthorized(client):
     # Try to delete without authentication
     response = client.delete("/expenses/1/")
