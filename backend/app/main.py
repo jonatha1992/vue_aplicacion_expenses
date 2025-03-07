@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import auth_routes, category_routes, expense_routes , wallet_routes , shared_expense_routes
+from .routes import auth_routes, category_routes, expense_routes , wallet_routes , shared_expense_routes , income_routes
 from .database import Base, engine
 import os
 import uvicorn
@@ -24,6 +24,7 @@ app.add_middleware(
 
 # Include routers without prefix (prefix is in routes)
 app.include_router(expense_routes.router)
+app.include_router(income_routes.router)
 app.include_router(category_routes.router)
 app.include_router(auth_routes.router)
 app.include_router(wallet_routes.router)

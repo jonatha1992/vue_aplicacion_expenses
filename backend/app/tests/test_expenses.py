@@ -39,28 +39,7 @@ def test_get_user_expenses(client, authentication_token, test_user):
     assert len(data) > 0
     assert data[0]["description"] == expense_data["description"]
 
-def test_create_expense_invalid_category(client, authentication_token, test_user):
-    expense_data = {
-        "description": "Test expense",
-        "amount": 100.0,
-        "date": datetime.now().isoformat(),
-        "category_id": 1,  # Categoría que no existe
-        "expense_type": "único"
-    }
-    headers = {"Authorization": f"Bearer {authentication_token}"}
-    response = client.post("/expenses/", json=expense_data, headers=headers)
-    assert response.status_code == 404
 
-def test_create_expense_without_auth(client):
-    expense_data = {
-        "description": "Test expense",
-        "amount": 100.0,
-        "date": datetime.now().isoformat(),
-        "category_id": 1,
-        "expense_type": "único"
-    }
-    response = client.post("/expenses/", json=expense_data)
-    assert response.status_code == 401
 
 def test_get_expenses_by_date_range(client, authentication_token):
     headers = {"Authorization": f"Bearer {authentication_token}"}

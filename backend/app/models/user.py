@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from pydantic import BaseModel
+from pydantic import BaseModel , ConfigDict
 from datetime import datetime
 from typing import Optional
 from .base import Base
@@ -17,7 +17,12 @@ class UserDB(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Mantener solo la relación con wallet
-    wallet = relationship("WalletDB", back_populates="user", uselist=False)
+    wallet = relationship("WalletDB", back_populates="user", uselist=False , lazy="joined")
+    
+    # Propiedad calculada para exponer el id de la wallet
+    @property
+    def wallet_id(self) -> Optional[int]:
+        return self.wallet.id if self.wallet else None
 
 # Esquema de usuario (Pydantic)
 class User(BaseModel):
@@ -25,9 +30,10 @@ class User(BaseModel):
     username: str
     email: str
     created_at: Optional[datetime] = None
+    wallet_id: Optional[int] = None  # Se llenará a partir de la propiedad en UserDB
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+    
 
 # Para ingreso/registro, puedes definir esquemas adicionales (p.ej., UserCreate)
 class UserCreate(BaseModel):
