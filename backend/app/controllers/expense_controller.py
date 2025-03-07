@@ -35,9 +35,20 @@ def get_expense(db: Session, expense_id: int) -> Optional[Expense]:
     db_expense = db.query(ExpenseDB).filter(ExpenseDB.id == expense_id).first()
     return Expense.model_validate(db_expense) if db_expense else None
 
+# def get_all_expenses(db: Session, user_id: int) -> List[Expense]:
+#     db_expenses = db.query(ExpenseDB).filter(ExpenseDB.user_id == user_id).all()
+#     return [Expense.model_validate(exp) for exp in db_expenses]
+
 def get_all_expenses(db: Session, user_id: int) -> List[Expense]:
-    db_expenses = db.query(ExpenseDB).filter(ExpenseDB.user_id == user_id).all()
+    # Filtrar gastos mediante el usuario asociado a la wallet
+    db_expenses = (
+        db.query(ExpenseDB)
+          .join(ExpenseDB.wallet)
+          .filter(ExpenseDB.wallet.has(user_id=user_id))
+          .all()
+    )
     return [Expense.model_validate(exp) for exp in db_expenses]
+
 
 def update_expense(db: Session, expense_id: int, expense_update: ExpenseCreate) -> Optional[Expense]:
     db_expense = db.query(ExpenseDB).filter(ExpenseDB.id == expense_id).first()
