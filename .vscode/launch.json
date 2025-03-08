@@ -27,6 +27,20 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Python: pytest income",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "app/tests/test_incomes.py", // Específico para tests de ingresos
+                "-v",
+                "--disable-warnings"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }
